@@ -1,10 +1,10 @@
 from flask import Flask, render_template,request,url_for
-from flask_bootstrap import Bootstrap 
-
+from flask_bootstrap import Bootstrap
+from newspaper import Article
 
 # NLP Packages
-from textblob import TextBlob,Word 
-import random 
+from textblob import TextBlob,Word
+import random
 import time
 
 app = Flask(__name__)
@@ -19,8 +19,12 @@ def index():
 def analyse():
 	start = time.time()
 	if request.method == 'POST':
-		rawtext = request.form['rawtext']
+		url = request.form['rawtext']
 		#NLP Stuff
+		article = Article(url)
+		article.download()
+		article.parse()
+		rawtext = article.text
 		blob = TextBlob(rawtext)
 		received_text2 = blob
 		blob_sentiment,blob_subjectivity = blob.sentiment.polarity ,blob.sentiment.subjectivity
